@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:12
+    ports:
+      - 25432:5432
+    environment:
+      POSTGRES_PASSWORD: "dev_password"
+    volumes:
+      - ${PWD}/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ${PWD}/postgres/pgconfig.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+  api:
+    build: ./api
+    ports:
+      - 3000:3000
+    environment:
+      PG_CONNECTION_STRING: "postgresql://postgres:dev_password@postgres:5432/postgres"
